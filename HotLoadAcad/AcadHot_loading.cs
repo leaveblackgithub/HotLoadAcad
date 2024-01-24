@@ -1,14 +1,13 @@
-﻿using Autodesk.AutoCAD.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Runtime;
+using HotLoadAcad;
 using JoinBoxCurrency;
 using RemoteAccess;
+using AcadApp = Autodesk.AutoCAD.ApplicationServices;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
-[assembly: CommandClass(typeof(HotLoadAcad.AcadHot_loading))]
+[assembly: CommandClass(typeof(AcadHot_loading))]
 
 namespace HotLoadAcad
 {
@@ -23,25 +22,45 @@ namespace HotLoadAcad
      *  <PropertyGroup><Deterministic>False</Deterministic></PropertyGroup>
      *  [assembly: AssemblyVersion("1.0.*")]
      */
-    class AcadHot_loading
+    internal class AcadHot_loading
     {
+        private static readonly Editor _editor = Application.DocumentManager.MdiActiveDocument.Editor;
+
         [CommandMethod("HotLoading_dll")]
         public void MainLoading()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "dll|*.dll";           //删选、设定文件显示类型
-            if (ofd.ShowDialog() != DialogResult.OK)
-                return;
-
-            string path = ofd.FileName;  //获得选择的文件路径
-
+            _editor.WriteMessage("HotLoading_dll240124\n");
+            var path = (Application.GetSystemVariable("FILEDIA").ToString()=="0")? GetPathFrEditor() : GetPathFrDia();
+            if (path == "") return;
             var ad = new AssemblyDependent(path);
             //运行时出错的话,就靠这个事件来解决
             ad.CurrentDomainAssemblyResolveEvent += RunTimeCurrentDomain.DefaultAssemblyResolve;
 
             ad.Load();
-            var ed = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument.Editor;
+            var ed = _editor;
             ed.WriteMessage(ad.LoadErrorMessage);
+        }
+
+        private static string GetPathFrDia()
+        {
+            var ofd = new OpenFileDialog();
+            ofd.Filter = "dll|*.dll"; //删选、设定文件显示类型
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return "";
+
+            var path = ofd.FileName; //获得选择的文件路径
+            return path;
+        }
+
+        private static string GetPathFrEditor()
+        {
+            var ed = _editor;
+            var pr = ed.GetString("输入dll路径:");
+            if (pr.Status != PromptStatus.OK)
+                return "";
+
+            var path = pr.StringResult; //获得选择的文件路径
+            return path;
         }
     }
 }
