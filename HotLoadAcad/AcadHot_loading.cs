@@ -24,12 +24,12 @@ namespace HotLoadAcad
      */
     internal class AcadHot_loading
     {
-        private static readonly Editor _editor = Application.DocumentManager.MdiActiveDocument.Editor;
+        private static  Editor ActiveEditor => Application.DocumentManager.MdiActiveDocument.Editor;
 
         [CommandMethod("HotLoading_dll")]
         public void MainLoading()
         {
-            _editor.WriteMessage("HotLoading_dll240124\n");
+            ActiveEditor.WriteMessage("HotLoading_dll240124\n");
             var path = (Application.GetSystemVariable("FILEDIA").ToString()=="0")? GetPathFrEditor() : GetPathFrDia();
             if (path == "") return;
             var ad = new AssemblyDependent(path);
@@ -37,7 +37,7 @@ namespace HotLoadAcad
             ad.CurrentDomainAssemblyResolveEvent += RunTimeCurrentDomain.DefaultAssemblyResolve;
 
             ad.Load();
-            var ed = _editor;
+            var ed = ActiveEditor;
             ed.WriteMessage(ad.LoadErrorMessage);
         }
 
@@ -54,7 +54,7 @@ namespace HotLoadAcad
 
         private static string GetPathFrEditor()
         {
-            var ed = _editor;
+            var ed = ActiveEditor;
             var pr = ed.GetString("输入dll路径:");
             if (pr.Status != PromptStatus.OK)
                 return "";
