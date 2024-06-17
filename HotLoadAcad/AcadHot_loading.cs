@@ -36,7 +36,7 @@ namespace HotLoadAcad
             //运行时出错的话,就靠这个事件来解决
             ad.CurrentDomainAssemblyResolveEvent += RunTimeCurrentDomain.DefaultAssemblyResolve;
 
-            ad.Load();
+            ad.HotLoad();
             var ed = ActiveEditor;
             ed.WriteMessage(ad.LoadErrorMessage);
         }
