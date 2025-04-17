@@ -16,17 +16,17 @@ from 《CAD.net开发链式加载DLL调试方法》 https://zhuanlan.zhihu.com/p
 ```
 
 同时修改AssemblyInfo.cs
-'''xml
+```xml
 [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-'''
+```
 
 - net standard只需要增加.csproj的这里,没有自己加一个:
 
-'''xml
+```xml
 <PropertyGroup>
     <AssemblyVersion>1.0.0.*</AssemblyVersion> 
     <FileVersion>1.0.0.0</FileVersion>
     <Deterministic>False</Deterministic>
 </PropertyGroup>
-'''
+```
