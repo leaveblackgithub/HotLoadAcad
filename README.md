@@ -9,11 +9,11 @@ from 《CAD.net开发链式加载DLL调试方法》 https://zhuanlan.zhihu.com/p
 
 - net framework要直接编辑项目文件.csproj,启用由vs迭代版本号:
 
-'''xml
+```xml
 <PropertyGroup>
   <Deterministic>False</Deterministic>
 </PropertyGroup>
-'''
+```
 
 同时修改AssemblyInfo.cs
 '''xml
